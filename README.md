@@ -2,7 +2,7 @@
 
 Advisor Prep Agent is a local-first, AI-native web application designed to solve a legacy workflow in wealth management: analyzing messy, unstructured client documents and turning them into an actionable, verifiable prep brief for financial advisors. 
 
-### [Watch the 3-Minute Demo Video Here](https://www.youtube.com/watch?v=GLi2iVKhAho)
+### [Watch the 3-Minute Demo Video Here (YouTube)](https://www.youtube.com/watch?v=GLi2iVKhAho)
 ### [Download the 3-Minute Demo Video Here (Google Drive)](https://drive.google.com/file/d/1LTf6oylQKR2IoV6bX9RkRn04iVzqNz7e/view?usp=sharing)
 
 ---
