@@ -18,10 +18,40 @@ const isPdf = computed(() => {
   return store.activeSource?.document_name?.toLowerCase().endsWith('.pdf')
 })
 
+const isImage = computed(() => {
+  const name = store.activeSource?.document_name?.toLowerCase() || ''
+  return name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg')
+})
+
+const isText = computed(() => {
+  const name = store.activeSource?.document_name?.toLowerCase() || ''
+  return name.endsWith('.txt') || name.endsWith('.csv')
+})
+
+// For text files, we need to fetch the content since we can't embed them directly
+import { ref, watchEffect } from 'vue'
+const textContent = ref('')
+
+watchEffect(async () => {
+  if (isText.value && sourceUrl.value) {
+    try {
+      const resp = await fetch(sourceUrl.value)
+      if (resp.ok) {
+        textContent.value = await resp.text()
+      } else {
+        textContent.value = "Failed to load document content."
+      }
+    } catch (e) {
+      textContent.value = "Error loading document content."
+    }
+  } else {
+    textContent.value = ''
+  }
+})
+
 const pageNumber = computed(() => {
   return store.activeSource?.page || 1
 })
-
 </script>
 
 <template>
@@ -52,6 +82,7 @@ const pageNumber = computed(() => {
         <p class="font-medium text-lg">No active source</p>
       </div>
       
+      <!-- PDF Renderer -->
       <div v-else-if="isPdf" class="w-full max-w-4xl bg-white rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden ring-4 ring-slate-800/50 mx-auto transition-transform">
         <VuePdfEmbed
           :source="sourceUrl"
@@ -60,11 +91,27 @@ const pageNumber = computed(() => {
         />
       </div>
 
+      <!-- Image Renderer -->
+      <div v-else-if="isImage" class="w-full max-w-4xl bg-slate-800 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 ring-4 ring-slate-800/50 mx-auto flex items-center justify-center min-h-[400px]">
+        <img :src="sourceUrl" alt="Document Source Image" class="max-w-full max-h-[800px] object-contain rounded-lg shadow-md" />
+      </div>
+
+      <!-- Raw Text Renderer (TXT, CSV) -->
+      <div v-else-if="isText" class="w-full max-w-4xl bg-slate-900 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden ring-4 ring-slate-800/50 mx-auto flex flex-col min-h-[400px]">
+        <div class="bg-slate-800 py-3 px-5 border-b border-slate-700 flex justify-between items-center shrink-0">
+          <h3 class="font-mono text-sm text-slate-300">{{ store.activeSource.document_name }}</h3>
+        </div>
+        <pre class="p-6 text-slate-300 font-mono text-sm overflow-x-auto overflow-y-auto whitespace-pre-wrap leading-relaxed max-h-[700px]">{{ textContent }}</pre>
+      </div>
+
+      <!-- Unsupported Binary Fallback (XLSX, DOCX) -->
       <div v-else class="w-full max-w-4xl bg-white rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-10 text-slate-800 ring-4 ring-slate-800/50 mx-auto min-h-[400px]">
         <h3 class="text-2xl font-bold mb-6 border-b-2 border-slate-200 pb-4">{{ store.activeSource.document_name }}</h3>
+        <div class="bg-slate-100 p-6 rounded-lg mb-6 border border-slate-200">
+          <p class="font-medium text-slate-700 mb-2">This file format cannot be rendered natively in the browser.</p>
+          <p class="text-slate-500 text-sm">However, the AI successfully extracted the following insight:</p>
+        </div>
         <p class="whitespace-pre-wrap font-serif text-lg leading-relaxed text-slate-600">
-          This file is not a PDF, but the quote can be found here:
-          <br><br>
           <strong class="text-black bg-yellow-200/50 px-2 py-1 rounded">"{{ store.activeSource.extracted_quote }}"</strong>
         </p>
       </div>

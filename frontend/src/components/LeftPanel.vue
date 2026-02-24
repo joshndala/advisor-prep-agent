@@ -103,7 +103,7 @@ const handleGeneratePrep = async () => {
             </svg>
           </div>
           <p class="font-medium text-slate-300">Click or drag document to upload</p>
-          <p class="text-sm mt-1 opacity-70">Supports PDF, TXT, CSV</p>
+          <p class="text-sm mt-1 opacity-70">Supports PDF, TXT, CSV, XLSX, DOCX, PNG, JPG</p>
         </div>
 
         <!-- Available Files -->
@@ -156,16 +156,16 @@ const handleGeneratePrep = async () => {
           'border-red-500/50 bg-red-900/10 opacity-75 grayscale-[0.2]': item.status === 'discarded'
         }"
       >
-        <div class="flex flex-col sm:flex-row justify-between items-start gap-3 mb-3">
+        <div class="flex flex-wrap justify-between items-start gap-y-3 gap-x-4 mb-3">
           <h3 
-            class="font-semibold text-lg text-blue-300 leading-tight pr-4 break-words whitespace-normal transition-all"
+            class="flex-1 min-w-[200px] font-semibold text-lg text-blue-300 leading-tight pr-4 break-words whitespace-normal transition-all"
             :class="{'line-through text-slate-500': item.status === 'discarded'}"
           >
             {{ item.topic }}
           </h3>
           <span 
             v-if="item.action_required && item.status !== 'discarded'" 
-            class="text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full text-amber-200 bg-amber-900/30 border border-amber-800/50 shrink-0 whitespace-nowrap self-start"
+            class="text-[10px] max-w-full font-bold uppercase tracking-widest px-2.5 py-1.5 rounded-lg text-amber-200 bg-amber-900/30 border border-amber-800/50 whitespace-normal break-words text-left sm:text-right self-start"
           >
             {{ item.action_required.replace(/_/g, ' ') }}
           </span>
