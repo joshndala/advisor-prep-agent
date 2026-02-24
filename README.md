@@ -4,6 +4,8 @@ Advisor Prep Agent is a local-first, AI-native web application designed to solve
 
 This project demonstrates a clear "human-in-the-loop" decision boundary through a robust verification UI, allowing advisors to approve or discard AI-generated insights before exporting a finalized agenda.
 
+### LINK TO DEMO: https://www.youtube.com/watch?v=GLi2iVKhAho
+
 ## Architecture
 
 The project is structured as a monorepo containing two main parts:
